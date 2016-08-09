@@ -1,5 +1,9 @@
 import re
 
+'''
+tool finds all rows into file which contain digits
+'''
+
 finalList = []
 i = 0
 finalSum = 0
