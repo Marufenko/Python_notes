@@ -1,3 +1,7 @@
+'''
+tool check string b for entry any ocmbination of string s
+'''
+
 s = 'acb'
 b = 'abaacbbeabca'
 
