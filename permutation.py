@@ -22,3 +22,9 @@ while i < len(b) - len(s) + 1:
     i += 1
 
 print result_list
+
+
+
+#brootforce
+#x='abvcvbabavvbavacacacavvabcabcab'
+#a = [x + ": " + str(s.count(x)) for x in list(map("".join, permutations("abc")))]
