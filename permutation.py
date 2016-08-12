@@ -7,15 +7,15 @@ b = 'abaacbbeabca'
 
 result_list = []
 
-pattern_list = []
-for char in s: pattern_list.append(char)
+
+pattern_list = [char for char in s]
 pattern_list.sort()
+print pattern_list
 
 i = 0
 while i < len(b) - len(s) + 1:
     tmp_val = b[i:i+len(s)]
-    tmp_list = []
-    for char in tmp_val: tmp_list.append(char)
+    tmp_list = [char for char in tmp_val]
     tmp_list.sort()
     if tmp_list == pattern_list:
         result_list.append(tmp_val)
