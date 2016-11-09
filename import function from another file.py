@@ -1,0 +1,3 @@
+from ps1_partition import get_partitions
+
+...
