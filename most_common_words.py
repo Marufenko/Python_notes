@@ -16,7 +16,7 @@ def wordsCounting(fileName,firstWord,lastWord):
 
     for word in words:
         word = re.sub(r'[,.!%^&*()?:;\'\"\\\/0-9]', '', word) # filter special characters and numbers
-        if len(word) > 3: # ignore words with len < 3
+        if len(word) > 3: # ignore words with len < 4
             counts[word] = counts.get(word, 0) + 1
 
     # sort 'counts' dics with words
@@ -30,4 +30,4 @@ def wordsCounting(fileName,firstWord,lastWord):
     except Exception:
         print('File does not contain separate word with len > 3 ')
 
-print(wordsCounting("1.txt",1000,1050))
+print(wordsCounting("1.txt",1000,1100))
