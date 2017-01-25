@@ -23,3 +23,5 @@ def function(L):
             return False
         #print "char: " + char + " char_list: " + str(char_list)
     return True
+
+print(function('(()())'))
