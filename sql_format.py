@@ -45,6 +45,7 @@ def main():
     one_row_query     = one_row(old_file.read())
     upper_case_query  = upper_case(one_row_query)
     indentation_query = indentation(upper_case_query)
+    alignmened_query = alignment (indentation_query)
     print(one_row_query)
     print(upper_case_query)
     print(indentation_query)
@@ -64,30 +65,6 @@ def one_row(or_query):
     return or_query
 
 
-# def upper_case(uc_query):
-#     # function returns query in upper case except quoted parts
-#     uc_sub_strings    = []
-#     uc_start_position = 0
-#     uc_quote          = None
-#
-#     for i in range(len(uc_query)):
-#         if uc_quote is None and uc_query[i] in "\"'":                                      # for substring without quotes
-#             uc_end_position   = i
-#             uc_sub_strings.append(uc_query[uc_start_position:uc_end_position].upper())
-#             uc_start_position = uc_end_position
-#             uc_quote          = uc_query[i]
-#         elif uc_quote is not None and uc_query[i] == uc_quote:                             # for substring in quotes
-#             uc_end_position   = i
-#             uc_sub_strings.append(uc_query[uc_start_position:uc_end_position + 1])
-#             uc_start_position = uc_end_position + 1
-#             uc_quote          = None
-#         elif i == len(uc_query) - 1:                                                       # for last char in string
-#             uc_sub_strings.append(uc_query[i])
-#
-#     uc_upper_case_string = ''.join(uc_sub_strings)
-#     return uc_upper_case_string
-
-
 def upper_case(uc_query):
     # function returns query in upper case except quoted parts
     uc_sub_strings = []
@@ -104,10 +81,14 @@ def upper_case(uc_query):
     uc_upper_case_string = ''.join(uc_sub_strings)
     return(uc_upper_case_string)
 
+
 def indentation(i_query):
+    # function returns query with aligned indents before each keyword
+
     key_word_dict = {
         "SELECT":   "",
         "FROM":     "\n  ",
+        "JOIN":     "\n  ",
         "WHERE":    "\n ",
         "AND":      "   ",
         "GROUP BY": "\n ",
@@ -115,18 +96,21 @@ def indentation(i_query):
         "ORDER BY": "\n "
     }
 
-    # for key in key_word_dict:
-    #     if key in i_query:
-    #         position = i_query.find(key)
-    #         i_query  = i_query[:position] + "\n" + key_word_dict[key] + i_query[position:]
-
     for key in key_word_dict:
         occurrences = [m.start() for m in re.finditer(key,i_query)]
+        i = 0
         for o_position in occurrences:
-            i_query = i_query[:o_position] + "\n" + key_word_dict[key] + i_query[o_position:]
-            # occurrences = [o + len(key_word_dict[key]) for o in occurrences]
+            i_query = i_query[:(o_position + i)] + "\n" + key_word_dict[key] + i_query[(o_position + i):] # after first occurence all following should take into account that str is update with some count of chars
+            i += len(key_word_dict[key]) + 1
 
     return i_query
+
+def alignment(a_query):
+    # function returns query With interline formatting
+
+    for row in a_query.split('\n'):
+        print(row.lstrip().startswith("SELECT ", 0))
+        print('\n')
 
 
 if __name__ == '__main__':
