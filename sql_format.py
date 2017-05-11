@@ -46,9 +46,7 @@ def main():
     upper_case_query  = upper_case(one_row_query)
     indentation_query = indentation(upper_case_query)
     alignmened_query = alignment (indentation_query)
-    print(one_row_query)
-    print(upper_case_query)
-    print(indentation_query)
+    print(alignmened_query)
 
     # new_file.write(indentation_query)
 
@@ -90,7 +88,7 @@ def indentation(i_query):
         "FROM":     "\n  ",
         "JOIN":     "\n  ",
         "WHERE":    "\n ",
-        "AND":      "   ",
+         "AND":      "   ",
         "GROUP BY": "\n ",
         "HAVING":   "",
         "ORDER BY": "\n "
@@ -108,9 +106,69 @@ def indentation(i_query):
 def alignment(a_query):
     # function returns query With interline formatting
 
+    # найдем самую длинную строку перед знаком равно
+    equal_positions = []
     for row in a_query.split('\n'):
-        print(row.lstrip().startswith("SELECT ", 0))
-        print('\n')
+        if '=' in row:
+            equal_positions.append(len((row.split('='))[0]))
+    max_value = max(equal_positions)
+
+    # дополним остальные строки до этой длины
+    rows = []
+    for row in a_query.split('\n'):
+        if '=' in row:
+            # выравнивает по максимальной строке дополняя пробелами
+            rows.append(((row.split('='))[0] + " "*max_value)[:max_value] + '=' + (row.split('='))[1] + '\n')
+        else:
+            rows.append(row + '\n')
+
+    a_query = ''.join(rows)
+    return a_query
+
+    # for row in a_query.split('\n'):
+    #     # энтеры между полями в секции select
+    #     if row.lstrip().startswith("SELECT ", 0):
+    #         positions = [m.start() for m in re.finditer(',', row)]
+    #         start_position = None
+    #         for finish_position in positions:
+    #             if not start_position:
+    #                 rows.append(row[:finish_position + 1] + '\n')
+    #                 start_position = finish_position
+    #             elif start_position:
+    #                 rows.append(row[start_position:finish_position + 1] + '\n')
+    #         rows.append('       ' + row[start_position + 1:].lstrip() + '\n')
+    #
+    #     # выравнивание равношек в секции where
+    #     elif row.lstrip().startswith("WHERE ", 0):
+    #         words = row.split()
+    #         #найдем позиции всех знаков равно
+    #         equal_sign_positions = []
+    #         for i in range(len(words)):
+    #             if words[i] == '=':
+    #                 equal_sign_positions.append(i)
+    #         # определим самое длинное слово перед равно, по которому будем выравнивать знаки
+    #         words_lenth = []
+    #         for item in equal_sign_positions:
+    #             words_lenth.append(len(words[item - 1]))
+    #         max_value = max(words_lenth)
+    #         # собираем секцию where с дополнением строк пробелами и раставлением '\n'
+    #         positions = [m.start() for m in re.finditer('AND', row)]
+    #         start_position = 0
+    #         for finish_position in positions:
+    #             if start_position == 0:
+    #                 rows.append(row[:finish_position] + " "*max_value + '\n')
+    #                 start_position = finish_position
+    #             elif start_position > 0:
+    #                 rows.append('       ' + row[start_position:finish_position] + '\n')
+    #                 start_position = finish_position
+    #         rows.append('       ' + row[start_position:].lstrip() + '\n')
+    #
+    #     # остальные строки не меняем
+    #     else:
+    #         rows.append(row + '\n')
+    #
+    # # for i in rows:
+    # #     print(i)
 
 
 if __name__ == '__main__':
