@@ -42,11 +42,15 @@ def main():
     old_file = open(file,'r') # open file for format # old_file = open(sys.argv[1], 'r')
 
     # parsing
-    one_row_query     = one_row(old_file.read())
-    upper_case_query  = upper_case(one_row_query)
-    indentation_query = indentation(upper_case_query)
-    alignmened_query = alignment (indentation_query)
-    print(alignmened_query)
+    one_row_query          = one_row(old_file.read())
+    upper_case_query       = upper_case(one_row_query)
+    indentation_query      = indentation(upper_case_query)
+    if ' JOIN ' in indentation_query:
+        indentation_query  = alignment_join(indentation_query)
+    if ' WHERE ' in indentation_query:
+        indentation_query  = alignment_where(indentation_query)
+    final                  = alignment_comma(indentation_query)
+    print(final)
 
     # new_file.write(indentation_query)
 
@@ -57,6 +61,12 @@ def main():
 
 
 def one_row(or_query):
+
+    # начнем с дополнения пробелами спец символов
+    symbol_list = ['=', '>', '<', '/', '^', '+', '-']
+    for item in symbol_list:
+        or_query = or_query.replace(item, ' ' + item + ' ')
+
     # function returns query in one row without duplicates of whitespaces
     or_query.replace("\n", " ")                      # drop '\n' symbols
     or_query = ' '.join(or_query.split())            # drop duplicated whitespaces
@@ -84,14 +94,13 @@ def indentation(i_query):
     # function returns query with aligned indents before each keyword
 
     key_word_dict = {
-        "SELECT":   "",
-        "FROM":     "\n  ",
-        "JOIN":     "\n  ",
-        "WHERE":    "\n ",
-         "AND":      "   ",
-        "GROUP BY": "\n ",
-        "HAVING":   "",
-        "ORDER BY": "\n "
+        "SELECT":   "  ",
+        "FROM":     "\n    ",
+        "JOIN":     "    ",
+        "WHERE":    "\n   ",
+        "GROUP BY": "\n",
+        "HAVING":   "  ",
+        "ORDER BY": "\n"
     }
 
     for key in key_word_dict:
@@ -103,72 +112,131 @@ def indentation(i_query):
 
     return i_query
 
-def alignment(a_query):
+
+def alignment_join(join_query):
     # function returns query With interline formatting
+
+    # теперь строки с join разделим на несколько строк по 'AND'
+    a_rows = []
+    for row in join_query.split('\n'):
+        if (' ON ' in row) and (' AND ' in row):
+            # разбиение по ANDам
+            for k in range(len(row.split(' AND '))):
+                if k < len(row.split(' AND ')) - 1:
+                    a_rows.append((row.split(' AND '))[k] + "\n     AND ")
+                else:
+                    a_rows.append((row.split(' AND '))[k] + "\n")
+        else:
+            a_rows.append(row + '\n')
+
+    # соберем строчки вместе
+    a_query_temp = ''.join(a_rows)
+
+    # посчитаем кол-во знаковперед ON что бы сдвинуть AND в секции JOIN
+    on_position = []
+    for row in a_query_temp.split('\n'):
+        if ' FROM ' in row:
+            on_position.append(len(row))
+        elif ' ON ' in row:
+            on_position.append(len((row.split(' ON '))[0]))
+    max_on_value = max(on_position) - 4
+
+    # двигаем ANDы и ON в JOIN секции
+    a_row_m = []
+    for row in a_query_temp.split('\n'):
+        if ' ON ' in row:
+            dif = 0
+            row_len = len(row.split(' ON ')[0])
+            if row_len < max_on_value:
+                dif = max_on_value - row_len + 4
+            if dif:
+                a_row_m.append(row.split(' ON ')[0] + ' '*dif + '  ON ' + row.split(' ON ')[1] + '\n')
+            else:
+                a_row_m.append(row.replace(' ON ', '  ON ') + '\n')
+        elif ' AND ' in row and ' WHERE ' not in row:
+            a_row_m.append(' '*max_on_value + row + '\n')
+        else:
+            a_row_m.append(row + '\n')
+    m_query = ''.join(a_row_m)
 
     # найдем самую длинную строку перед знаком равно
     equal_positions = []
-    for row in a_query.split('\n'):
-        if '=' in row:
+    for row in m_query.split('\n'):
+        if ' JOIN ' in row or (' AND ' in row and ' WHERE ' not in row):
             equal_positions.append(len((row.split('='))[0]))
     max_value = max(equal_positions)
 
-    # дополним остальные строки до этой длины
-    rows = []
-    for row in a_query.split('\n'):
-        if '=' in row:
-            # выравнивает по максимальной строке дополняя пробелами
-            rows.append(((row.split('='))[0] + " "*max_value)[:max_value] + '=' + (row.split('='))[1] + '\n')
+    # теперь будем дополнять пробелами секции join игнорирую where
+    a_rows_f = []
+    for row in m_query.split('\n'):
+        if ('=' in row) and (' WHERE ' not in row):
+            a_rows_f.append(((row.split('='))[0] + " "*max_value)[:max_value] + '=' + (row.split('='))[1] + '\n')
         else:
-            rows.append(row + '\n')
+            a_rows_f.append(row + '\n')
 
-    a_query = ''.join(rows)
-    return a_query
+    join_query = ''.join(a_rows_f)
+    return join_query
 
-    # for row in a_query.split('\n'):
-    #     # энтеры между полями в секции select
-    #     if row.lstrip().startswith("SELECT ", 0):
-    #         positions = [m.start() for m in re.finditer(',', row)]
-    #         start_position = None
-    #         for finish_position in positions:
-    #             if not start_position:
-    #                 rows.append(row[:finish_position + 1] + '\n')
-    #                 start_position = finish_position
-    #             elif start_position:
-    #                 rows.append(row[start_position:finish_position + 1] + '\n')
-    #         rows.append('       ' + row[start_position + 1:].lstrip() + '\n')
-    #
-    #     # выравнивание равношек в секции where
-    #     elif row.lstrip().startswith("WHERE ", 0):
-    #         words = row.split()
-    #         #найдем позиции всех знаков равно
-    #         equal_sign_positions = []
-    #         for i in range(len(words)):
-    #             if words[i] == '=':
-    #                 equal_sign_positions.append(i)
-    #         # определим самое длинное слово перед равно, по которому будем выравнивать знаки
-    #         words_lenth = []
-    #         for item in equal_sign_positions:
-    #             words_lenth.append(len(words[item - 1]))
-    #         max_value = max(words_lenth)
-    #         # собираем секцию where с дополнением строк пробелами и раставлением '\n'
-    #         positions = [m.start() for m in re.finditer('AND', row)]
-    #         start_position = 0
-    #         for finish_position in positions:
-    #             if start_position == 0:
-    #                 rows.append(row[:finish_position] + " "*max_value + '\n')
-    #                 start_position = finish_position
-    #             elif start_position > 0:
-    #                 rows.append('       ' + row[start_position:finish_position] + '\n')
-    #                 start_position = finish_position
-    #         rows.append('       ' + row[start_position:].lstrip() + '\n')
-    #
-    #     # остальные строки не меняем
-    #     else:
-    #         rows.append(row + '\n')
-    #
-    # # for i in rows:
-    # #     print(i)
+
+def alignment_where(where_query):
+    # function returns query With interline formatting
+
+    # теперь строки с join разделим на несколько строк по 'AND'
+    w_rows = []
+    for row in where_query.split('\n'):
+        if (' WHERE ' in row) and (' AND ' in row):
+            # разбиение по ANDам
+            for k in range(len(row.split(' AND '))):
+                if k < len(row.split(' AND ')) - 1:
+                    w_rows.append((row.split(' AND '))[k] + "\n    wAND ") # нужен специфический символ перед and в секции where что бы отличать от andов в секции join
+                else:
+                    w_rows.append((row.split(' AND '))[k] + "\n")
+        else:
+            w_rows.append(row + '\n')
+
+    # соберем строчки вместе
+    w_query_temp = ''.join(w_rows)
+
+    # найдем самую длинную строку перед знаком равно
+    w_equal_positions = []
+    for row in w_query_temp.split('\n'):
+        if (' WHERE ' in row) or (' wAND ' in row):
+            w_equal_positions.append(len((row.split('='))[0]))
+        # else:
+        #     pass
+    w_max_value = max(w_equal_positions)
+
+    # теперь будем дополнять пробелами секции join игнорирую where
+    w_rows_f = []
+    for row in w_query_temp.split('\n'):
+        if ('=' in row) and (' WHERE ' in row or ' wAND ' in row ):
+            w_rows_f.append(((row.split('='))[0] + " "*w_max_value)[:w_max_value] + '=' + (row.split('='))[1] + '\n')
+        else:
+            w_rows_f.append(row + '\n')
+
+    where_query = ''.join(w_rows_f)
+
+    where_query_final = where_query.replace(' wAND ', '  AND ')
+
+    return where_query_final
+
+
+
+def alignment_comma(comma_query):
+    # форматирует строки с перечсленными значениями через запятую
+
+    comma_rows = []
+    for row in comma_query.split('\n'):
+        if ',' in row:
+            for i in range(len(row.split(','))):
+                if i == 0:
+                    comma_rows.append(row.split(',')[0] + '\n')
+                else:
+                    comma_rows.append(' '*9 + ',' + row.split(',')[i].lstrip() + '\n')
+        else:
+            comma_rows.append(row + '\n')
+    comma_query = ''.join (comma_rows)
+    return comma_query
 
 
 if __name__ == '__main__':
