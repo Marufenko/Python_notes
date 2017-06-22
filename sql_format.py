@@ -36,7 +36,7 @@ def main():
     print('\n')            # sys.stdout.write('\n')
 
     # create new file
-    new_file_name = file[:4] + '_formated.sql'       # new_file_name = sys.argv[1][:4] + '_formated.sql'
+    new_file_name = file[:-4] + '_formated.sql'       # new_file_name = sys.argv[1][:4] + '_formated.sql'
     new_file = open(new_file_name, 'w')
 
     old_file = open(file,'r') # open file for format # old_file = open(sys.argv[1], 'r')
