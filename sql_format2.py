@@ -48,16 +48,14 @@ def main():
 
     # comma formating
     final_rows = []
-    row_scope = ['SELECT ', 'GROUP BY ', 'ORDER BY ']
-    for item in row_scope:
-        for row in indentation_query.split('\n'):
-            if item in row:
-                final_rows.append(comma_format(row))
-            else:
-                final_rows.append(row + '\n')
-        indentation_query = ''.join(final_rows)
+    for row in indentation_query.split('\n'):
+        if 'SELECT ' in row or 'ORDER BY ' in row or 'GROUP BY ' in row or 'HAVING ' in row:
+            final_rows.append(comma_format(row))
+        else:
+            final_rows.append(row + '\n')
+    final_query = ''.join(final_rows)
 
-    print(indentation_query)
+    print(final_query)
     # new_file.write(indentation_query)
 
     new_file.close()
@@ -68,8 +66,23 @@ def main():
 
 def one_row(or_query):
     # function returns query in one row without duplicates of whitespaces
-    or_query.replace("\n", " ")                      # drop '\n' symbols
-    or_query = ' '.join(or_query.split())            # drop duplicated whitespaces
+
+    # ralpace "-- ... \n" comment to "/* ... */"
+    for i in range(len(or_query) - 1):
+        if or_query[i] == "-" and or_query[i+1] == "-":
+            or_query = or_query[:i] + "/*" + or_query[i+2:] # replace
+            k = 0
+            for j in range(i, len(or_query)):
+                if k == 0:
+                    if or_query[j] == "\n":
+                        or_query = or_query[:j] + "*/ " + or_query[j+1:]
+                        k += 1
+
+    # drop '\n' symbols
+    or_query.replace("\n", " ")
+
+    # drop duplicated whitespaces
+    or_query = ' '.join(or_query.split())
     return or_query
 
 def upper_case(uc_query):
@@ -103,10 +116,11 @@ def indentation(i_query):
     }
 
     for key in key_word_dict:
-        occurrences = [m.start() for m in re.finditer(key,i_query)]
+        occurrences = [m.start() for m in re.finditer(key, i_query)]
         i = 0
         for o_position in occurrences:
-            i_query = i_query[:(o_position + i)] + "\n" + key_word_dict[key] + i_query[(o_position + i):] # after first occurence all following should take into account that str is update with some count of chars
+            # after first occurence all following should take into account that str is update with some count of chars
+            i_query = i_query[:(o_position + i)] + "\n" + key_word_dict[key] + i_query[(o_position + i):]
             i += len(key_word_dict[key]) + 1
 
     return i_query
@@ -118,7 +132,7 @@ def spaces_around_commas(sac_query):
     for i in range(len(sac_query)):
         if sac_query[i] == '(':
             parantheses_list.append(sac_query[i])
-        elif parantheses_list and sac_query[i] == parantheses_list[-1]:
+        elif parantheses_list and sac_query[i] == ')':
             parantheses_list.pop()
         elif sac_query[i] == ',' and not parantheses_list and sac_query[i+1] == ' ':
             sac_query = sac_query[:i+1] + sac_query[i+2:] + ' '
@@ -135,9 +149,35 @@ def comma_format(cf_query):
 
     # block required to take into account only ',' chars outside
     parantheses_list = []
+    comment_list     = []
     char_list        = []
     for char in cf_query:
-        if char == '(':
+
+        # comment handler
+        if char == '/':
+            if not comment_list:
+                comment_list.append(char)
+                char_list.append(char)
+            elif comment_list:
+                if len(comment_list) == 1 and comment_list[-1] == "/":
+                    comment_list.pop()
+                    char_list.append(char)
+
+        elif char == '*':
+            if not comment_list:
+                char_list.append(char)
+            elif comment_list:
+                if len(comment_list) == 1 and comment_list[-1] == "/":
+                    comment_list.append(char)
+                    char_list.append(char)
+                elif len(comment_list) == 2 and comment_list[-1] == "*":
+                    comment_list.pop()
+                    char_list.append(char)
+
+        elif char != "/" and char != "*" and comment_list:
+            char_list.append(char)
+
+        elif char == '(':
             parantheses_list.append(')')
             char_list.append(char)
         elif parantheses_list and char == parantheses_list[-1]:
@@ -154,6 +194,7 @@ def comma_format(cf_query):
     indent_len = len(cf_query.split('\n')[0].rstrip().rsplit(' ', 1)[0]) + 1
 
     # add appropriate indent before each ','
+
     row_list = []
     i = 0
     for row in cf_query.split('\n'):
