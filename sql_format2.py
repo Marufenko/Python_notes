@@ -174,8 +174,15 @@ def comma_format(cf_query):
                     comment_list.pop()
                     char_list.append(char)
 
+        # elif char != "/" and char != "*" and comment_list:
+        #     char_list.append(char)
+
         elif char != "/" and char != "*" and comment_list:
-            char_list.append(char)
+            if len(comment_list) == 2:
+                char_list.append(char)
+            else:
+                comment_list = []
+                char_list.append(char)
 
         elif char == '(':
             parantheses_list.append(')')
