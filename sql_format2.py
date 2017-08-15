@@ -55,16 +55,7 @@ def main():
             final_rows.append(row + '\n')
     com_form_query = ''.join(final_rows)
 
-    # 'AND' formating
-    and_rows = []
-    for row in com_form_query.split('\n'):
-        if ' AND ' in row:
-            and_rows.append(and_format(row))
-        else:
-            and_rows.append(row + '\n')
-        final_query = ''.join(and_rows)
-
-    print(final_query)
+    print(com_form_query)
     # new_file.write(final_query)
 
     new_file.close()
@@ -222,14 +213,6 @@ def comma_format(cf_query):
 
     cf_query = ''.join(row_list)
     return cf_query
-
-
-def and_format(and_query):
-    # function put each statement with 'AND' on separate line
-
-
-
-    return and_query
 
 
 if __name__ == '__main__':
