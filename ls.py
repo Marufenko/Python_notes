@@ -10,6 +10,7 @@
 # General Public License for more details.
 
 import locale
+
 locale.setlocale(locale.LC_ALL, "")
 
 import datetime
@@ -44,8 +45,7 @@ def main():
         for path in paths:
             for root, dirs, files in os.walk(path):
                 if not opts.hidden:
-                    dirs[:] = [dir for dir in dirs
-                               if not dir.startswith(".")]
+                    dirs[:] = [dir for dir in dirs if not dir.startswith(".")]
                 filenames = []
                 for name in files:
                     if not opts.hidden and name.startswith("."):
@@ -57,11 +57,14 @@ def main():
                 counts[0] += len(filenames)
                 counts[1] += len(dirs)
                 process_lists(opts, filenames, [])
-    print("{0} file{1}, {2} director{3}".format(
-          "{0:n}".format(counts[0]) if counts[0] else "no",
-          "s" if counts[0] != 1 else "",
-          "{0:n}".format(counts[1]) if counts[1] else "no",
-          "ies" if counts[1] != 1 else "y"))
+    print(
+        "{0} file{1}, {2} director{3}".format(
+            "{0:n}".format(counts[0]) if counts[0] else "no",
+            "s" if counts[0] != 1 else "",
+            "{0:n}".format(counts[1]) if counts[1] else "no",
+            "ies" if counts[1] != 1 else "y",
+        )
+    )
 
 
 def process_lists(opts, filenames, dirnames):
@@ -70,9 +73,12 @@ def process_lists(opts, filenames, dirnames):
         modified = ""
         if opts.modified:
             try:
-                modified = (datetime.datetime.fromtimestamp(
-                                os.path.getmtime(name))
-                                    .isoformat(" ")[:19] + " ")
+                modified = (
+                    datetime.datetime.fromtimestamp(os.path.getmtime(name)).isoformat(
+                        " "
+                    )[:19]
+                    + " "
+                )
             except EnvironmentError:
                 modified = "{0:>19} ".format("unknown")
         size = ""
@@ -89,8 +95,7 @@ def process_lists(opts, filenames, dirnames):
             orderkey = size
         else:
             orderkey = name
-        keys_lines.append((orderkey,
-                           "{0}{1}{2}".format(modified, size, name)))
+        keys_lines.append((orderkey, "{0}{1}{2}".format(modified, size, name)))
     size = "" if not opts.sizes else " " * 15
     modified = "" if not opts.modified else " " * 20
     for name in sorted(dirnames):
@@ -105,23 +110,46 @@ def process_options():
 The paths are optional; if not given . is used."""
 
     parser = optparse.OptionParser(usage=usage)
-    parser.add_option("-H", "--hidden", dest="hidden",
-            action="store_true",
-            help=("show hidden files [default: off]"))
-    parser.add_option("-m", "--modified", dest="modified",
-            action="store_true",
-            help=("show last modified date/time [default: off]"))
+    parser.add_option(
+        "-H",
+        "--hidden",
+        dest="hidden",
+        action="store_true",
+        help=("show hidden files [default: off]"),
+    )
+    parser.add_option(
+        "-m",
+        "--modified",
+        dest="modified",
+        action="store_true",
+        help=("show last modified date/time [default: off]"),
+    )
     orderlist = ["name", "n", "modified", "m", "size", "s"]
-    parser.add_option("-o", "--order", dest="order",
-            choices=orderlist,
-            help=("order by ({0}) [default: %default]".format(
-                  ", ".join(["'" + x + "'" for x in orderlist]))))
-    parser.add_option("-r", "--recursive", dest="recursive",
-            action="store_true",
-            help=("recurse into subdirectories [default: off]"))
-    parser.add_option("-s", "--sizes", dest="sizes",
-            action="store_true",
-            help=("show sizes [default: off]"))
+    parser.add_option(
+        "-o",
+        "--order",
+        dest="order",
+        choices=orderlist,
+        help=(
+            "order by ({0}) [default: %default]".format(
+                ", ".join(["'" + x + "'" for x in orderlist])
+            )
+        ),
+    )
+    parser.add_option(
+        "-r",
+        "--recursive",
+        dest="recursive",
+        action="store_true",
+        help=("recurse into subdirectories [default: off]"),
+    )
+    parser.add_option(
+        "-s",
+        "--sizes",
+        dest="sizes",
+        action="store_true",
+        help=("show sizes [default: off]"),
+    )
     parser.set_defaults(order=orderlist[0])
     opts, args = parser.parse_args()
     if not args:

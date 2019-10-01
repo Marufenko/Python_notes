@@ -1,11 +1,14 @@
+import random
+
+
 def oneTrial():
-    '''
+    """
     Simulates one trial of drawing 3 balls out of a bucket containing
     3 red and 3 green balls. Balls are not replaced once
     drawn. Returns True if all three balls are the same color,
     False otherwise.
-    '''
-    balls = ['r', 'r', 'r', 'g', 'g', 'g']
+    """
+    balls = ["r", "r", "r", "g", "g", "g"]
     chosenBalls = []
     for t in range(3):
         # For three trials, pick a ball
@@ -20,17 +23,18 @@ def oneTrial():
         return True
     return False
 
+
 def noReplacementSimulation(numTrials):
-    '''
+    """
     Runs numTrials trials of a Monte Carlo simulation
     of drawing 3 balls out of a bucket containing
     3 red and 3 green balls. Balls are not replaced once
     drawn. Returns the a decimal - the fraction of times 3 
     balls of the same color were drawn.
-    '''
+    """
     numTrue = 0
     for trial in range(numTrials):
         if oneTrial():
             numTrue += 1
 
-    return float(numTrue)/float(numTrials)
+    return float(numTrue) / float(numTrials)

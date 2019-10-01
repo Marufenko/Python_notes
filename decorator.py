@@ -5,7 +5,8 @@ def positive_result(function):
         result = function(*args, **kwargs)
         assert result >= 0, function.__name__ + "() reslt isn't >= 0"
         return result + 1
-    # wrapper.__name__ = function.__name__
+
+    wrapper.__name__ = function.__name__
     wrapper.__doc__ = function.__doc__
     return wrapper
 

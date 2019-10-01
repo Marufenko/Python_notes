@@ -20,5 +20,14 @@ while True:
     except ValueError as err:
         print(err)
 
-print("numbers: ",numbers)
-print("count=",total,"; lowest=",lowest,"; highest=",highest,"; mean=",total/len(numbers))
+print("numbers: ", numbers)
+print(
+    "count=",
+    total,
+    "; lowest=",
+    lowest,
+    "; highest=",
+    highest,
+    "; mean=",
+    total / len(numbers),
+)

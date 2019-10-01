@@ -6,19 +6,19 @@ def yieldAllCombos(items):
         Yields a tuple, (bag1, bag2), where each bag is represented as a list 
         of which item(s) are in each bag.
     """
-    N=len(items)
-    for i in range(3**N):
-        bag1 =[]
-        bag2 =[]
+    N = len(items)
+    for i in range(3 ** N):
+        bag1 = []
+        bag2 = []
 
-# n is a local variable that we repeatedly divide by 3
-# in the loop. It is also fine to use i directly.
-        n=i
+        # n is a local variable that we repeatedly divide by 3
+        # in the loop. It is also fine to use i directly.
+        n = i
         for j in range(N):
-            a=n%3 # Extract the least significant digit.
-            if a==1:
+            a = n % 3  # Extract the least significant digit.
+            if a == 1:
                 bag1.append(items[j])
-            elif a==2:
+            elif a == 2:
                 bag2.append(items[j])
-            n=n//3
-        yield(bag1, bag2)
+            n = n // 3
+        yield (bag1, bag2)

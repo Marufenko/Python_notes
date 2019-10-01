@@ -2,7 +2,7 @@ import configparser
 
 def return_config(section, key):
     parser = configparser.ConfigParser()
-    parser.read('config.ini')
+    parser.read('ini_config.ini')
 
     return parser.get(section, key)
 

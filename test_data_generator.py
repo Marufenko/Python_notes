@@ -3,6 +3,8 @@ program generate matrix of int numbers is specified range
 """
 
 import random
+
+
 def get_int(msg, minimum, default):
     while True:
         try:
@@ -16,6 +18,7 @@ def get_int(msg, minimum, default):
                 return i
         except ValueError as err:
             print(err)
+
 
 rows = get_int("rows: ", 1, None)
 columns = get_int("columns: ", 1, None)

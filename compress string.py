@@ -1,7 +1,7 @@
 def compress(string):
-    '''compress row from "aaaaaaaaabbc" to "a9b2c1"'''
+    # compress row from "aaaaaaaaabbc" to "a9b2c1"
     dictionary = {}
-    result = ''
+    result = ""
 
     for char in string:
         if char not in dictionary.keys():
