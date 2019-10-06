@@ -1,0 +1,158 @@
+<html>
+  <head>
+    <style>
+
+      :root {
+      --background: #000000;
+      --surface: #121212;
+      --up: #03DAC5;
+      --down: #CF6679;
+      --error: #CF6679;
+      --inactive: #747474;
+      --purpole: #BB86FC;
+      --white: #FFFFFF;
+
+      --text-high-emphasis: 0.87;
+      --text-medium-emphasis: 0.60;
+      --text-disabled: 0.38;
+      }
+
+      body {
+        background-color: var(--background);
+        font-family: Roboto,sans-serif;
+        color: var(--white);
+      }
+      .oneline {
+        display: inline-block;
+      }
+      .container {
+        background-color: var(--surface);
+        margin: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        width: 220px;
+        border-style: solid;
+        border-width: 2px;
+      }
+      .host {
+        font-size: 16px;
+        opacity: var(--text-high-emphasis);
+        margin: 5px;
+        text-transform: uppercase;
+      }
+      .service {
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        float:right;
+      }
+      .space {
+        font-size: 10px;
+        opacity: var(--text-medium-emphasis);
+        margin: 5px;
+      }
+      .sessions {
+        height: 54px;
+        width: 100%;
+        position: relative;
+        border-radius: 10px;
+      }
+      .session {
+        width: 15px;
+        border-radius: 5px;
+        margin: 2px;
+        position: absolute;
+        bottom: 0;
+      }
+      .session_n {height: 50px; right: 0;}
+      .session_n-1 {height: 25px; right: 19;}
+      .session_n-2 {height: 35px; right: 38;}
+      .session_n-3 {height: 20px; right: 57;}
+      .session_n-4 {height: 10px; right: 76;}
+    </style>
+  </head>
+  <body>
+
+    Container(Host(name(str), status(color)), Service(status(color)), Space(data(str), status(color)),
+    Sessios(status(color),status(color),status(color),status(color),status(color)))
+
+    <div class="container oneline" style="border-color: var(--background);">
+      <div class="host oneline">all up</div>
+      <span class="service" style="background-color: var(--up);"></span>
+      <div class="sessions">
+        <div class="space oneline" style="color:  var(--white);">7% opt used</div>
+        <span class="session oneline session_n" style="background-color: var(--up);"></span>
+        <span class="session oneline session_n-1" style="background-color: var(--up);"></span>
+        <span class="session oneline session_n-2" style="background-color: var(--up);"></span>
+        <span class="session oneline session_n-3" style="background-color: var(--up);"></span>
+        <span class="session oneline session_n-4" style="background-color: var(--up);"></span>
+      </div>
+    </div>
+
+    <div class="container oneline" style="border-color: var(--background);">
+      <div class="host oneline">few up</div>
+      <span class="service" style="background-color: var(--up);"></span>
+      <div class="sessions">
+        <div class="space oneline" style="color:  var(--white);">7% opt used</div>
+        <span class="session oneline session_n" style="background-color: var(--up);"></span>
+        <span class="session oneline session_n-1" style="background-color: var(--up);"></span>
+        <span class="session oneline session_n-2" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-3" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-4" style="background-color: var(--inactive);"></span>
+      </div>
+    </div>
+
+    <div class="container oneline" style="border-color: var(--background);">
+      <div class="host oneline">few down</div>
+      <span class="service" style="background-color: var(--up);"></span>
+      <div class="sessions">
+        <div class="space oneline" style="color:  var(--white);">7% opt used</div>
+        <span class="session oneline session_n" style="background-color: var(--down);"></span>
+        <span class="session oneline session_n-1" style="background-color: var(--down);"></span>
+        <span class="session oneline session_n-2" style="background-color: var(--up);"></span>
+        <span class="session oneline session_n-3" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-4" style="background-color: var(--inactive);"></span>
+      </div>
+    </div>
+
+    <div class="container oneline" style="border-color: var(--error);">
+      <div class="host oneline">all down</div>
+      <span class="service" style="background-color: var(--up);"></span>
+      <div class="sessions">
+        <div class="space oneline" style="color:  var(--white);">7% opt used</div>
+        <span class="session oneline session_n" style="background-color: var(--down);"></span>
+        <span class="session oneline session_n-1" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-2" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-3" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-4" style="background-color: var(--inactive);"></span>
+      </div>
+    </div>
+
+    <div class="container oneline" style="border-color: var(--error);">
+      <div class="host oneline">no space</div>
+      <span class="service" style="background-color: var(--up);"></span>
+      <div class="sessions">
+        <div class="space oneline" style="color: var(--error);">99% opt used</div>
+        <span class="session oneline session_n" style="background-color: var(--up);"></span>
+        <span class="session oneline session_n-1" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-2" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-3" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-4" style="background-color: var(--inactive);"></span>
+      </div>
+    </div>
+
+    <div class="container oneline" style="border-color: var(--error);">
+      <div class="host oneline">service down</div>
+      <span class="service" style="background-color: var(--down);"></span>
+      <div class="sessions">
+        <div class="space oneline" style="color:  var(--white);">7% opt used</div>
+        <span class="session oneline session_n" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-1" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-2" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-3" style="background-color: var(--inactive);"></span>
+        <span class="session oneline session_n-4" style="background-color: var(--inactive);"></span>
+      </div>
+    </div>
+
+  </body>
+</html>
